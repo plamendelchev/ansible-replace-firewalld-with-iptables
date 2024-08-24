@@ -1,0 +1,25 @@
+---
+# tasks file for ansible-replace-firewalld-with-iptables
+- name: Ensure iptables is installed
+  ansible.builtin.package:
+    name:
+      - iptables
+      - iptables-services
+    state: present
+
+- name: Stop, Disable firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: stopped
+    enabled: false
+
+- name: Start, Enable iptables
+  ansible.builtin.service:
+    name: iptables
+    state: started
+    enabled: true
+
+- name: Remove firewalld
+  ansible.builtin.package:
+    name: firewalld
+    state: absent
