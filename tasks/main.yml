@@ -12,6 +12,7 @@
     name: firewalld
     state: stopped
     enabled: false
+  failed_when: false
 
 - name: Start, Enable iptables
   ansible.builtin.service:
