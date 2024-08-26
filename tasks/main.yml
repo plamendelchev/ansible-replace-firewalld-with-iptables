@@ -1,5 +1,9 @@
 ---
 # tasks file for ansible-replace-firewalld-with-iptables
+- name: Gather Package Facts
+  ansible.builtin.package_facts:
+    manager: auto
+
 - name: Ensure iptables is installed
   ansible.builtin.package:
     name:
@@ -12,7 +16,7 @@
     name: firewalld
     state: stopped
     enabled: false
-  failed_when: false
+  when: "'firewalld' in ansible_facts.packages"
 
 - name: Start, Enable iptables
   ansible.builtin.service:
@@ -20,7 +24,32 @@
     state: started
     enabled: true
 
+- name: Set Chains Policy to ACCEPT
+  ansible.builtin.iptables:
+    chain: "{{ item }}"
+    policy: ACCEPT
+  loop:
+    - INPUT
+    - FORWARD
+    - OUTPUT
+  when:
+    - "'firewalld' in ansible_facts.packages"
+    - replace_firewalld_with_iptables_accept_chain_policy | bool
+
+- name: Flush Chains
+  ansible.builtin.iptables:
+    chain: "{{ item }}"
+    flush: true
+  loop:
+    - INPUT
+    - FORWARD
+    - OUTPUT
+  when:
+    - "'firewalld' in ansible_facts.packages"
+    - replace_firewalld_with_iptables_remove_leftovers | bool
+
 - name: Remove firewalld
   ansible.builtin.package:
     name: firewalld
     state: absent
+  when: "'firewalld' in ansible_facts.packages"

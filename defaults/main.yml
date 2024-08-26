@@ -1,0 +1,3 @@
+# defaults file for ansible-replace-firewalld-with-iptables
+replace_firewalld_with_iptables_accept_chain_policy: true
+replace_firewalld_with_iptables_remove_leftovers: true
