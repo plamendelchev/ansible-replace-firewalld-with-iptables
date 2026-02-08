@@ -7,8 +7,8 @@
 - name: Ensure iptables is installed
   ansible.builtin.package:
     name:
-      - iptables
-      - iptables-services
+      - iptables-nft
+      - iptables-nft-services
     state: present
 
 - name: Stop, Disable firewalld
